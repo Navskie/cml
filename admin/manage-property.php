@@ -40,7 +40,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <?php include_once 'include/head.php' ?>
-
   <body>
     <div class="main-wrapper">
       <?php include_once 'include/navbar.php' ?>
@@ -194,10 +193,28 @@
                       </div>
                   </form>
 
-                  <div class="amenities d-flex flex-wrap align-items-center mt-4 w-100 gap-3" id="amenities-list">
+                  <div class="amenities d-flex flex-wrap align-items-center my-4 w-100 gap-3" id="amenities-list">
                       <!-- New amenities will be added here -->
                   </div>
 
+                  <h5>Property Images</h5>
+                  <form action="#" id="image-form" enctype="multipart/form-data">
+                    <div class="row">
+                      <div class="col-12 col-sm-12 col-md-6">
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                          <input type="file" name="file[]" class="form-control rounded-0" multiple />
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-sm-12 col-md-6">
+                        <button type="submit" class="btn btn-primary text-white btn-sm rounded-0 form-control">Upload Images</button>
+                      </div>
+                    </div>
+                  </form>
+
+                  <div class="amenities d-flex flex-wrap align-items-center mt-4 w-100 gap-3" id="imageslist-list">
+                    <!-- New images will be added here -->
+                  </div>
 
                 </div>
               </div>
@@ -270,32 +287,30 @@
       });
     });
 
-
-// Load existing amenities when the page loads
-function loadAmenities() {
-        $.ajax({
-            url: 'backend/property/fetch_amenities',
-            type: 'GET',
-            data: { id: propertyId },
-            dataType: 'json',
-            success: function(response) {
-                if (response.length > 0) {
-                    $('#amenities-list').empty();  // Clear the existing list
-
-                    response.forEach(function(amenity) {
-                        var amenityHtml = '<div class="group d-flex flex-column align-items-center amenity-item" data-filename="' + amenity.filename + '">' +
-                            '<img src="../img/amenities/' + amenity.filename + '" style="width: 30px;">' +
-                            '<a class="text-danger mt-2 delete-amenity" href="#">Trash</a>' +
-                        '</div>';
-
-                        $('#amenities-list').append(amenityHtml);
-                    });
-                }
-            },
-            error: function() {
-                toastr.error('An error occurred while fetching amenities.');
+    function loadAmenities() {
+      $.ajax({
+        url: 'backend/property/fetch_amenities',
+        type: 'GET',
+        data: { id: propertyId },
+        dataType: 'json',
+        success: function(response) {
+            if (response.length > 0) {
+                $('#amenities-list').empty();  // Clear the existing list
+                response.forEach(function(amenity) {
+                    var amenityHtml = '<div class="group d-flex flex-column align-items-center amenity-item" data-filename="' + amenity.filename + '">' +
+                        '<img src="../img/amenities/' + amenity.filename + '" style="width: 100%;">' +
+                        '<a class="text-danger mt-2 delete-amenity" href="#">Trash</a>' +
+                    '</div>';
+                    $('#amenities-list').append(amenityHtml);
+                });
+            } else {
+                $('#amenities-list').html('<p>No amenities found.</p>');
             }
-        });
+        },
+        error: function() {
+            toastr.error('An error occurred while fetching amenities.');
+        }
+      });
     }
 
     // Call the function to load the amenities when the page is ready
@@ -379,5 +394,120 @@ function loadAmenities() {
             }
         });
     });
+
+  // Handle form submission to upload multiple images
+  $('#image-form').on('submit', function(event) {
+    event.preventDefault();  // Prevent default form submission
+
+    var formData = new FormData(this);  // Form data from the form
+    formData.append('property_id', propertyId);  // Append the property ID to FormData
+
+    $.ajax({
+      url: 'backend/property/upload_images',  // Backend script
+      type: 'POST',
+      data: formData,
+      contentType: false,
+      processData: false,
+      dataType: 'json',
+      success: function(response) {
+        if (response.status === 'success') {
+          toastr.success('Images uploaded successfully!');
+          loadImages();  // Reload the images list
+        } else {
+          toastr.error(response.message);
+        }
+      },
+      error: function() {
+        toastr.error('An error occurred while uploading the images');
+      }
+    });
+  });
+
+  function loadImages() {
+    var propertyId = $('#property_id').val();  // Ensure this is correct in your HTML
+
+    $.ajax({
+        url: 'backend/property/fetch_images',  // The endpoint to fetch images
+        type: 'POST',  // Use POST method
+        data: { property_id: propertyId },  // Ensure the property_id is included in the POST request
+        dataType: 'json',
+        success: function(response) {
+            if (response.status === 'success') {
+                $('#imageslist-list').empty();  // Clear existing images
+                response.data.forEach(function(image) {
+                    // Dynamically build the image path
+                    var imagePath = `../img/properties/${image.property_id}/${image.filename}`;
+
+                    // Create the HTML for each image and the thumbnail button, plus the delete button
+                    var imageHtml = `
+                        <div class="col-4 image-item">
+                            <img src="${imagePath}" class="img-fluid" alt="${image.filename}">
+                            <button type="button" class="btn btn-link set-thumbnail-btn" data-id="${image.id}">Set as Thumbnail</button>
+                            <button type="button" class="btn btn-link delete-image-btn" data-id="${image.id}" data-filename="${image.filename}">Delete</button>
+                        </div>`;
+
+                    // Append the new image HTML to the list
+                    $('#imageslist-list').append(imageHtml);
+                });
+            } else {
+                toastr.error(response.message);  // Show error if property ID is not found
+            }
+        },
+        error: function() {
+            toastr.error('An error occurred while fetching the images');
+        }
+    });
+  }
+
+  // Handle the setting of the profile thumbnail
+  $(document).on('click', '.set-thumbnail-btn', function() {
+    var imageId = $(this).data('id');
+    $.ajax({
+      url: 'backend/property/set_thumbnail.php',  // Backend script to set the profile thumbnail
+      type: 'POST',
+      data: { id: imageId, property_id: propertyId },
+      dataType: 'json',
+      success: function(response) {
+        if (response.status === 'success') {
+          toastr.success('Thumbnail set successfully!');
+          loadImages();  // Reload images after setting the thumbnail
+        } else {
+          toastr.error(response.message);
+        }
+      },
+      error: function() {
+        toastr.error('An error occurred while setting the thumbnail');
+      }
+    });
+  });
+
+  // Handle the deletion of images
+  $(document).on('click', '.delete-image-btn', function() {
+    var imageId = $(this).data('id');
+    var imageName = $(this).data('filename');
+    var propertyId = $('#property_id').val();  // Ensure this is correct in your HTML
+
+    // Send AJAX request to delete the image
+    $.ajax({
+      url: 'backend/property/delete_image.php',  // Backend script to delete the image
+      type: 'POST',
+      data: { image_id: imageId, image_name: imageName, property_id: propertyId },
+      dataType: 'json',
+      success: function(response) {
+        if (response.status === 'success') {
+          toastr.success('Image deleted successfully!');
+          loadImages();  // Reload images list after deletion
+        } else {
+          toastr.error(response.message);
+        }
+      },
+      error: function() {
+        toastr.error('An error occurred while deleting the image');
+      }
+    });
+  });
+
+  // Initial call to load images when the page loads
+  loadImages();
   });
 </script>

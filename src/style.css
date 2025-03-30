@@ -300,6 +300,9 @@
   .order-none {
     order: 0;
   }
+  .col-4 {
+    grid-column: 4;
+  }
   .col-6 {
     grid-column: 6;
   }
@@ -399,6 +402,9 @@
       max-width: 96rem !important;
     }
   }
+  .m-7 {
+    margin: calc(var(--spacing) * 7);
+  }
   .m-\[15px\] {
     margin: 15px;
   }
@@ -410,6 +416,9 @@
   }
   .my-2 {
     margin-block: calc(var(--spacing) * 2);
+  }
+  .my-4 {
+    margin-block: calc(var(--spacing) * 4);
   }
   .my-\[25px\] {
     margin-block: 25px;
@@ -582,6 +591,9 @@
   }
   .h-48 {
     height: calc(var(--spacing) * 48);
+  }
+  .h-100 {
+    height: calc(var(--spacing) * 100);
   }
   .h-\[30px\] {
     height: 30px;

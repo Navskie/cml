@@ -1,0 +1,5 @@
+# Ignore database folder (if necessary)
+database/
+
+# Ignore node_modules
+node_modules/
