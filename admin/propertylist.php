@@ -109,7 +109,7 @@
     $(document).on('click', '.edit-btn', function() {
       var propertyId = $(this).data('id');
       // Redirect to the edit page with the property ID
-      window.location.href = 'edit_property.php?id=' + propertyId; // Adjust this URL to your edit page
+      window.location.href = 'manage-property.php?id=' + propertyId; // Adjust this URL to your edit page
     });
 
     // Delete Button Click
