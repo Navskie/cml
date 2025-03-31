@@ -1,4 +1,5 @@
 <head>
+  <?php include_once 'database/conn.php' ?>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Dedicated to creating quality and sustainable living spaces, CML Realty and Development offers tailored real estate solutions for buying, renting, and investing">

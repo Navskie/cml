@@ -45,123 +45,49 @@
       <p class="text-gray-600 mb-12" data-aos="fade-up">
         Explore a selection of premium properties for sale. Find your perfect home today!
       </p>
-      <span class="text-[18px] m-[15px] text-center font-semibold" data-aos="fade-up">The 18th Hansen</span>
-      
+      <?php 
+        $property_sql = mysqli_query($conn, "SELECT * FROM properties");
+      ?>
+      <span class="category text-[18px] m-[15px] text-center font-semibold" data-aos="fade-up">The 18th Hansen</span>
+
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
-        <!-- Repeat 4 Cards -->
-        <div class="bg-white border-[#EAE9EB] border-[1px] overflow-hidden transition-all duration-300 relative group" data-aos="fade-up" data-aos-duration="1200">
-          <img src="img/properties/UNIT A - 1 BEDROOM/thumbnail.jpg" alt="Unit C Studio Type" class="w-full h-48 object-cover" />
-          <div class="p-4">
-            <div class="flex justify-between items-center mb-2">
-              <h3 class="font-semibold text-lg"><a href="properties-details">Unit A - 1 Bedroom w/ Balcony</a></h3>
-              <span class="text-gray-600 text-sm flex gap-2 items-center w-[103px]"><img src="img/ruler.png" alt=""> 25 sqm</span>
-            </div>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/type.png" alt=""> Project Type: High-rise Condominium</p>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/date.png" alt="">Turn Over Date: 2028</p>
-            <div class="flex justify-end w-full py-2">
-              <!-- Right-aligned Price -->
-              <p class="font-bold text-lg">Php 0</p>
-            </div>
-          </div>
-          <div class="absolute -bottom-10 left-0 w-full bg-purple-600 text-white text-center py-2 opacity-0 group-hover:opacity-100 group-hover:bottom-0 transition-all duration-300">
-            <a href="properties-details">Details</a>
-          </div>
-        </div>
-        
-        <div class="bg-white border-[#EAE9EB] border-[1px] overflow-hidden transition-all duration-300 relative group" data-aos="fade-up" data-aos-duration="1200">
-          <img src="img/properties/UNIT B - STUDIO TYPE/thumbnail.jpg" alt="Unit C Studio Type" class="w-full h-48 object-cover" />
-          <div class="p-4">
-            <div class="flex justify-between items-center mb-2">
-              <h3 class="font-semibold text-lg"><a href="properties-details2">Unit B - Studio Type w/ Bacony</a></h3>
-              <span class="text-gray-600 text-sm flex gap-2 items-center w-[103px]"><img src="img/ruler.png" alt=""> 19 sqm</span>
-            </div>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/type.png" alt=""> Project Type: High-rise Condominium</p>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/date.png" alt="">Turn Over Date: 2028</p>
-            <div class="flex justify-end w-full py-2">
-              <!-- Right-aligned Price -->
-              <p class="font-bold text-lg">Php 0</p>
-            </div>
-          </div>
-          <div class="absolute -bottom-10 left-0 w-full bg-purple-600 text-white text-center py-2 opacity-0 group-hover:opacity-100 group-hover:bottom-0 transition-all duration-300">
-            <a href="properties-details2">Details</a>
-          </div>
-        </div>
+      <?php 
+        foreach ($property_sql as $property) {
+          $property_id = $property['id'];
+          $title = $property['title'];
+          $sqm = $property['sqm'];
+          $type = $property['type'];
+          $turnover = $property['turnover'];
+          $price = $property['price'];
 
+          $img_sql = mysqli_query($conn, "SELECT * FROM property_images WHERE property_id = '$property_id' AND is_thumbnail = 1");
+          $img_fetch = mysqli_fetch_array($img_sql);
+          $filename = $img_fetch['filename'];
+      ?>
+      
+        <!-- Repeat Cards -->
         <div class="bg-white border-[#EAE9EB] border-[1px] overflow-hidden transition-all duration-300 relative group" data-aos="fade-up" data-aos-duration="1200">
-          <img src="img/properties/UNIT C - STUDIO TYPE/thumbnail.jpg" alt="Unit C Studio Type" class="w-full h-48 object-cover" />
+          <img src="img/properties/<?php echo $property_id ?>/<?php echo $filename ?>" alt="Unit C Studio Type" class="w-full h-48 object-cover" />
           <div class="p-4">
             <div class="flex justify-between items-center mb-2">
-              <h3 class="font-semibold text-lg"><a href="properties-details3">Unit C - Studio Type w/ Bacony</a></h3>
-              <span class="text-gray-600 text-sm flex gap-2 items-center w-[103px]"><img src="img/ruler.png" alt=""> 19 sqm</span>
+              <h3 class="font-semibold text-lg"><a href="properties-details"><?php echo $title ?></a></h3>
+              <span class="text-gray-600 text-sm flex gap-2 items-center w-[103px]"><img src="img/ruler.png" alt=""> <?php echo $sqm ?></span>
             </div>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/type.png" alt=""> Project Type: High-rise Condominium</p>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/date.png" alt="">Turn Over Date: 2028</p>
+            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/type.png" alt=""> Project Type: <?php echo $type ?></p>
+            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/date.png" alt="">Turn Over Date: <?php echo $turnover ?></p>
             <div class="flex justify-end w-full py-2">
               <!-- Right-aligned Price -->
-              <p class="font-bold text-lg">Php 0</p>
+              <p class="font-bold text-lg"><?php echo $price ?></p>
             </div>
           </div>
           <div class="absolute -bottom-10 left-0 w-full bg-purple-600 text-white text-center py-2 opacity-0 group-hover:opacity-100 group-hover:bottom-0 transition-all duration-300">
-            <a href="properties-details3">Details</a>
+            <a href="properties-details?id=<?php echo $property_id ?>">Details</a>
           </div>
         </div>
-
-        <div class="bg-white border-[#EAE9EB] border-[1px] overflow-hidden transition-all duration-300 relative group" data-aos="fade-up" data-aos-duration="1200">
-          <img src="img/properties/UNIT C - STUDIO TYPE/thumbnail.jpg" alt="Unit C Studio Type" class="w-full h-48 object-cover" />
-          <div class="p-4">
-            <div class="flex justify-between items-center mb-2">
-              <h3 class="font-semibold text-lg"><a href="properties-details4">Unit D - 2 Bedroom w/ Bacony</a></h3>
-              <span class="text-gray-600 text-sm flex gap-2 items-center w-[103px]"><img src="img/ruler.png" alt=""> 32 sqm</span>
-            </div>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/type.png" alt=""> Project Type: High-rise Condominium</p>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/date.png" alt="">Turn Over Date: 2028</p>
-            <div class="flex justify-end w-full py-2">
-              <!-- Right-aligned Price -->
-              <p class="font-bold text-lg">Php 0</p>
-            </div>
-          </div>
-          <div class="absolute -bottom-10 left-0 w-full bg-purple-600 text-white text-center py-2 opacity-0 group-hover:opacity-100 group-hover:bottom-0 transition-all duration-300">
-            <a href="properties-details4">Details</a>
-          </div>
-        </div>
-
-        <div class="bg-white border-[#EAE9EB] border-[1px] overflow-hidden transition-all duration-300 relative group" data-aos="fade-up" data-aos-duration="1200">
-          <img src="img/properties/UNIT C - STUDIO TYPE/thumbnail.jpg" alt="Unit C Studio Type" class="w-full h-48 object-cover" />
-          <div class="p-4">
-            <div class="flex justify-between items-center mb-2">
-              <h3 class="font-semibold text-lg"><a href="properties-details5">Unit E - 1 Bedroom</a></h3>
-              <span class="text-gray-600 text-sm flex gap-2 items-center w-[103px]"><img src="img/ruler.png" alt=""> 22.3 sqm</span>
-            </div>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/type.png" alt=""> Project Type: High-rise Condominium</p>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/date.png" alt="">Turn Over Date: 2028</p>
-            <div class="flex justify-end w-full py-2">
-              <!-- Right-aligned Price -->
-              <p class="font-bold text-lg">Php 0</p>
-            </div>
-          </div>
-          <div class="absolute -bottom-10 left-0 w-full bg-purple-600 text-white text-center py-2 opacity-0 group-hover:opacity-100 group-hover:bottom-0 transition-all duration-300">
-            <a href="properties-details5">Details</a>
-          </div>
-        </div>
-
-        <div class="bg-white border-[#EAE9EB] border-[1px] overflow-hidden transition-all duration-300 relative group" data-aos="fade-up" data-aos-duration="1200">
-          <img src="img/properties/UNIT C - STUDIO TYPE/thumbnail.jpg" alt="Unit C Studio Type" class="w-full h-48 object-cover" />
-          <div class="p-4">
-            <div class="flex justify-between items-center mb-2">
-              <h3 class="font-semibold text-lg"><a href="properties-details6">Unit F - 1 Bedroom</a></h3>
-              <span class="text-gray-600 text-sm flex gap-2 items-center w-[103px]"><img src="img/ruler.png" alt=""> 23.6 sqm</span>
-            </div>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/type.png" alt=""> Project Type: High-rise Condominium</p>
-            <p class="text-gray-600 text-sm flex gap-2 items-center"><img src="img/date.png" alt="">Turn Over Date: 2028</p>
-            <div class="flex justify-end w-full py-2">
-              <!-- Right-aligned Price -->
-              <p class="font-bold text-lg">Php 0</p>
-            </div>
-          </div>
-          <div class="absolute -bottom-10 left-0 w-full bg-purple-600 text-white text-center py-2 opacity-0 group-hover:opacity-100 group-hover:bottom-0 transition-all duration-300">
-            <a href="properties-details6">Details</a>
-          </div>
-        </div>
+      
+      <?php 
+        }
+      ?>
       </div>
     </div>
 
